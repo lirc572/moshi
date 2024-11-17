@@ -1,0 +1,4 @@
+/rust/Dockerfile
+/.dockerignore
+/rust/target/
+/rust/Cargo.lock

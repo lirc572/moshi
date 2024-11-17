@@ -1,0 +1,25 @@
+services:
+  moshi:
+    image: ghcr.io/lirc572/moshi:latest
+    ports:
+      - 8998:8998
+    restart: unless-stopped
+    volumes:
+      - ./hf-cache:/root/.cache/huggingface
+      - ./tmp:/root/tmp
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              count: all
+    # command: /bin/moshi-backend --config /conf/config-q8.json standalone
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    environment:
+      TUNNEL_URL: http://moshi:8998
+    command: tunnel --no-autoupdate
+    depends_on:
+      - moshi
